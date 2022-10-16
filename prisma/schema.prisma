@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+/// This model has been renamed to 'Renamedcatch' during introspection, because the original name 'catch' is reserved.
+model Renamedcatch {
+  catchID                Int      @id @default(autoincrement())
+  name                   String   @db.VarChar(255)
+  date                   DateTime @db.DateTime(0)
+  description            String   @db.VarChar(45)
+  weight                 Float
+  fisher                 Int
+  imageURL               String   @db.VarChar(255)
+  session                Int
+  user                   user     @relation("catchTouser", fields: [fisher], references: [userID], onDelete: NoAction, onUpdate: NoAction, map: "FKfisher")
+  session_catchTosession session  @relation("catchTosession", fields: [session], references: [sessionID], onDelete: NoAction, onUpdate: NoAction, map: "FKsession")
+
+  @@index([fisher], map: "FKfisher_idx")
+  @@index([session], map: "FKsession_idx")
+  @@map("catch")
+}
+
+model session {
+  sessionID    Int            @id @default(autoincrement())
+  name         String         @db.VarChar(255)
+  location     String         @db.VarChar(255)
+  date         DateTime       @db.DateTime(0)
+  catch        Renamedcatch[] @relation("catchTosession")
+  session_user session_user[]
+}
+
+model session_user {
+  SessionID     Int
+  UserID        Int
+  SessionUserID Int     @id @default(autoincrement())
+  session       session @relation(fields: [SessionID], references: [sessionID], onDelete: NoAction, onUpdate: NoAction, map: "FKSessionID")
+  user          user    @relation(fields: [UserID], references: [userID], onDelete: NoAction, onUpdate: NoAction, map: "FKUserID")
+
+  @@index([SessionID], map: "FKSessionID_idx")
+  @@index([UserID], map: "FKUserID_idx")
+}
+
+model user {
+  userID       Int            @id @default(autoincrement())
+  name         String         @db.VarChar(255)
+  lastname     String         @db.VarChar(255)
+  email        String         @unique(map: "email_UNIQUE") @db.VarChar(255)
+  password     String         @db.VarChar(255)
+  roles        Json
+  catch        Renamedcatch[] @relation("catchTouser")
+  session_user session_user[]
+}
