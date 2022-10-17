@@ -80,7 +80,7 @@ module.exports = function installUserRoutes(app) {
   const requireAdmin = makeRequireRole(Role.ADMIN);
 
   const router = new Router({
-      prefix: '/users',
+      prefix: '/user',
   });
   
   router.post('/login', validate(login.validationScheme), login);

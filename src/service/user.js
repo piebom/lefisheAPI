@@ -112,6 +112,7 @@ const checkAndParseSession = async (authHeader) => {
 };
 
 const checkRole = (role, roles) => {
+  console.log('checkRole', role, roles);
   const hasPermission = roles.includes(role);
   if (!hasPermission) {
     throw ServiceError.forbidden('You are not allowed to view this part of the application');
